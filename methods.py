@@ -41,6 +41,9 @@ class UrbanRoutesPage:
             EC.element_to_be_clickable(self.locators.button_comfort)
         )
         btn.click()
+        class_attr = btn.get_attribute("class")
+        print(f"CLASE DEL BOTÓN: {class_attr}")  # DEBUG opcional
+        return "active" in class_attr or "selected" in class_attr
 
     def click_phone_number_button(self):
         self.driver.find_element(*self.locators.button_phone_number).click()
@@ -90,19 +93,28 @@ class UrbanRoutesPage:
         self.driver.find_element(*self.locators.close_btn).click()
 
     def add_comment(self, message):
-        self.driver.find_element(*self.locators.comment_input).send_keys(message)
+        comment_input = WebDriverWait(self.driver, 10).until(
+            EC.visibility_of_element_located(self.locators.comment_input)
+        )
+        comment_input.send_keys(message)
+        return comment_input.get_attribute('value')
 
     def click_manta_panuelos(self):
         self.driver.find_element(*self.locators.manta_panuelos).click()
 
     def add_ice_cream(self, quantity=2):
+        ice_cream_btn = WebDriverWait(self.driver, 10).until(
+            EC.element_to_be_clickable(self.locators.ice_cream)
+        )
         for _ in range(quantity):
-            self.driver.find_element(*self.locators.ice_cream).click()
+            ice_cream_btn.click()
+        return True
 
-    def pedir_taxi_button(self):
+    def click_pedir_taxi_button(self):
         self.driver.find_element(*self.locators.pedir_taxi_button).click()
 
     def wait_for_driver_modal(self):
-        WebDriverWait(self.driver, 35).until(
+        modal = WebDriverWait(self.driver, 35).until(
             EC.visibility_of_element_located(self.locators.driver_modal)
         )
+        return modal.is_displayed()
